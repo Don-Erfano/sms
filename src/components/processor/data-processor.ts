@@ -35,16 +35,6 @@ export const categoryHierarchy: {
     subcategories: string[];
   };
 } = {
-  اپراتوری: {
-    name: 'اپراتوری',
-    color: '#FF6B6B',
-    subcategories: ['اپراتوری'],
-  },
-  حاکمیتی: {
-    name: 'حاکمیتی',
-    color: '#4ECDC4',
-    subcategories: ['حاکمیتی'],
-  },
   تبلیغاتی: {
     name: 'تبلیغاتی',
     color: '#45B7D1',
@@ -64,6 +54,16 @@ export const categoryHierarchy: {
       'کافه و رستوران',
       'گردشگری',
     ],
+  },
+  حاکمیتی: {
+    name: 'حاکمیتی',
+    color: '#4ECDC4',
+    subcategories: ['حاکمیتی'],
+  },
+  اپراتوری: {
+    name: 'اپراتوری',
+    color: '#FF6B6B',
+    subcategories: ['اپراتوری'],
   },
   استخدام: {
     name: 'استخدام',

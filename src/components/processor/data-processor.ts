@@ -16,15 +16,69 @@ export interface CategoryData {
   persianName: string;
   count: number;
   color: string;
+  isMainCategory?: boolean;
+  parentCategory?: string;
 }
+
+export interface MainCategoryData {
+  name: string;
+  persianName: string;
+  count: number;
+  color: string;
+  subcategories: CategoryData[];
+}
+
+export const categoryHierarchy: {
+  [key: string]: {
+    name: string;
+    color: string;
+    subcategories: string[];
+  };
+} = {
+  اپراتوری: {
+    name: 'اپراتوری',
+    color: '#FF6B6B',
+    subcategories: ['اپراتوری'],
+  },
+  حاکمیتی: {
+    name: 'حاکمیتی',
+    color: '#4ECDC4',
+    subcategories: ['حاکمیتی'],
+  },
+  تبلیغاتی: {
+    name: 'تبلیغاتی',
+    color: '#45B7D1',
+    subcategories: [
+      'آموزشگاه',
+      'املاک',
+      'تجهیزات و خدمات خودرو',
+      'تفریحی',
+      'خدمات',
+      'خدمات منزل و دکوراسیون',
+      'رویداد و فرهنگی',
+      'زیبایی',
+      'فروشگاه‌های عمومی',
+      'ورزشی',
+      'پزشکی و سلامت',
+      'پوشاک و مد',
+      'کافه و رستوران',
+      'گردشگری',
+    ],
+  },
+  استخدام: {
+    name: 'استخدام',
+    color: '#96CEB4',
+    subcategories: ['استخدام'],
+  },
+};
 
 export const categoryConfig: {
   [key: string]: { name: string; color: string };
 } = {
   اپراتوری: { name: 'اپراتوری', color: '#FF6B6B' },
   حاکمیتی: { name: 'حاکمیتی', color: '#4ECDC4' },
-  استخدام: { name: 'استخدام', color: '#45B7D1' },
-  تبلیغاتی: { name: 'تبلیغاتی', color: '#96CEB4' },
+  استخدام: { name: 'استخدام', color: '#96CEB4' },
+  تبلیغاتی: { name: 'تبلیغاتی', color: '#45B7D1' },
   آموزشگاه: { name: 'آموزشگاه', color: '#FFEAA7' },
   املاک: { name: 'املاک', color: '#DDA0DD' },
   'تجهیزات و خدمات خودرو': { name: 'تجهیزات و خدمات خودرو', color: '#98D8C8' },
@@ -95,6 +149,43 @@ export const processLocationData = (): LocationData[] => {
       };
     })
     .filter((item): item is LocationData => item !== null);
+};
+
+export const getMainCategories = (data: LocationData[]): MainCategoryData[] => {
+  return Object.entries(categoryHierarchy)
+    .map(([mainCat, config]) => {
+      let totalCount = 0;
+      const subcategories: CategoryData[] = [];
+
+      config.subcategories.forEach((subCat) => {
+        let subCount = 0;
+        data.forEach((location) => {
+          if (location.categories[subCat]) {
+            subCount += location.categories[subCat];
+          }
+        });
+
+        if (subCount > 0) {
+          subcategories.push({
+            name: categoryConfig[subCat]?.name || subCat,
+            persianName: subCat,
+            count: subCount,
+            color: categoryConfig[subCat]?.color || '#999999',
+            parentCategory: mainCat,
+          });
+          totalCount += subCount;
+        }
+      });
+
+      return {
+        name: config.name,
+        persianName: mainCat,
+        count: totalCount,
+        color: config.color,
+        subcategories: subcategories.sort((a, b) => b.count - a.count),
+      };
+    })
+    .filter((mainCat) => mainCat.count > 0);
 };
 
 export const getCategoryStats = (data: LocationData[]): CategoryData[] => {

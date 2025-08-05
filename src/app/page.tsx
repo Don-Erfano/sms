@@ -3,36 +3,37 @@ import React, { useState, useEffect } from 'react';
 import CategoryFilter from '@/components/processor/CategoryFilter';
 import {
   processLocationData,
-  getCategoryStats,
   getProvinceData,
+  getMainCategories,
   LocationData,
-  CategoryData,
+  MainCategoryData,
 } from '@/components/processor/data-processor';
 import CategoryChart from '@/components/processor/CategoryChart';
 import Image from 'next/image';
 import MapWrapper from '@/components/processor/MapWrapperProps';
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined,
-  );
+  const [selectedMainCategory, setSelectedMainCategory] = useState<
+    string | undefined
+  >(undefined);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<
+    string | undefined
+  >(undefined);
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(
     null,
   );
   const [locationData, setLocationData] = useState<LocationData[]>([]);
-  const [categoryStats, setCategoryStats] = useState<CategoryData[]>([]);
+  const [mainCategories, setMainCategories] = useState<MainCategoryData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
       const processedData = processLocationData();
-
-      const stats = getCategoryStats(processedData);
-
+      const mainCats = getMainCategories(processedData);
       const provData = getProvinceData(processedData);
 
       setLocationData(processedData);
-      setCategoryStats(stats);
+      setMainCategories(mainCats);
     } catch (error) {
       console.error('Error processing data:', error);
     } finally {
@@ -44,9 +45,36 @@ export default function Home() {
     setSelectedLocation(location);
   };
 
-  const handleCategorySelect = (category?: string) => {
-    setSelectedCategory(category);
+  const handleMainCategorySelect = (category?: string) => {
+    setSelectedMainCategory(category);
     setSelectedLocation(null);
+  };
+
+  const handleSubCategorySelect = (category?: string) => {
+    setSelectedSubCategory(category);
+    setSelectedLocation(null);
+  };
+
+  const getFilteredData = () => {
+    if (selectedSubCategory) {
+      return locationData.filter((l) => l.categories[selectedSubCategory] > 0);
+    } else if (selectedMainCategory) {
+      const mainCat = mainCategories.find(
+        (cat) => cat.persianName === selectedMainCategory,
+      );
+      if (mainCat) {
+        return locationData.filter((l) =>
+          mainCat.subcategories.some(
+            (subCat) => l.categories[subCat.persianName] > 0,
+          ),
+        );
+      }
+    }
+    return locationData;
+  };
+
+  const getActiveCategory = () => {
+    return selectedSubCategory || selectedMainCategory;
   };
 
   if (loading) {
@@ -61,29 +89,29 @@ export default function Home() {
     <div className="min-h-screen p-4">
       <div className="w-full flex items-center justify-center mb-4">
         <CategoryFilter
-          categories={categoryStats}
-          selectedCategory={selectedCategory}
-          onCategorySelect={handleCategorySelect}
+          mainCategories={mainCategories}
+          selectedMainCategory={selectedMainCategory}
+          selectedSubCategory={selectedSubCategory}
+          onMainCategorySelect={handleMainCategorySelect}
+          onSubCategorySelect={handleSubCategorySelect}
         />
       </div>
       <div className="flex gap-4">
         <div className="w-full">
-          <div className="h-155 p-4 bg-white rounded-lg shadow-lg ">
+          <div className="h-155 p-4 bg-white rounded-lg shadow-lg">
             <MapWrapper
               data={locationData}
-              selectedCategory={selectedCategory}
+              selectedCategory={getActiveCategory()}
               onPinClick={handlePinClick}
             />
           </div>
         </div>
         <div className="w-full">
           <CategoryChart
-            data={
-              selectedCategory
-                ? locationData.filter((l) => l.categories[selectedCategory] > 0)
-                : locationData
-            }
-            selectedCategory={selectedCategory}
+            data={getFilteredData()}
+            selectedMainCategory={selectedMainCategory}
+            selectedSubCategory={selectedSubCategory}
+            mainCategories={mainCategories}
           />
           {selectedLocation && selectedLocation.image && (
             <div className="mt-4 p-4 shadow-xl bg-white rounded-lg">

@@ -117,8 +117,8 @@ const CategoryChart: React.FC<CategoryChartProps> = ({
         },
         title: {
           text: selectedCategory
-            ? `${categoryMapping[selectedCategory] || selectedCategory} Distribution`
-            : 'Category Distribution',
+            ? `${categoryMapping[selectedCategory] || selectedCategory}`
+            : 'تمام دسته بندی ها',
           align: 'center',
         },
         legend: {
@@ -130,20 +130,20 @@ const CategoryChart: React.FC<CategoryChartProps> = ({
 
   if (Object.keys(categoryTotals).length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-center h-80 bg-gray-50 rounded-lg">
         <p className="text-black">No data to display</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg">
+    <div className="bg-white h-79 p-4 rounded-lg shadow-lg">
       <Chart
         // @ts-ignore
         options={chartData.options}
         series={chartData.series}
         type="bar"
-        height={400}
+        height={300}
       />
     </div>
   );

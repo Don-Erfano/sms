@@ -8,6 +8,7 @@ export interface LocationData {
     [key: string]: number;
   };
   totalCount: number;
+  image: string | undefined;
 }
 
 export interface CategoryData {
@@ -65,7 +66,11 @@ export const processLocationData = (): LocationData[] => {
       let totalCount = 0;
 
       Object.keys(item).forEach((key) => {
-        if (key !== 'location_') {
+        if (
+          key !== 'location_' &&
+          key !== 'SMSContent_List' &&
+          key !== 'image'
+        ) {
           const count = parseInt(item[key]) || 0;
           if (count > 0) {
             categories[key] = count;
@@ -78,12 +83,15 @@ export const processLocationData = (): LocationData[] => {
         return null;
       }
 
+      const imagePath = item.image ? `/${item.image}` : undefined;
+
       return {
         id: `location-${index}`,
         lat,
         lng,
         categories,
         totalCount,
+        image: imagePath,
       };
     })
     .filter((item): item is LocationData => item !== null);

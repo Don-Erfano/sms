@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import Image from 'next/image';
 import {
   LocationData,
   categoryConfig,
@@ -37,7 +38,11 @@ const MapWithPins: React.FC<MapWithPinsProps> = ({
     }
 
     return L.divIcon({
-      html: `<div style="background:${color};border:2px solid white;border-radius:50%;width:${size}px;height:${size}px;box-shadow:0 2px 4px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:10px;">${selectedCategory ? location.categories[selectedCategory] || 0 : location.totalCount}</div>`,
+      html: `<div style="background:${color};border:2px solid white;border-radius:50%;width:${size}px;height:${size}px;box-shadow:0 2px 4px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:10px;">${
+        selectedCategory
+          ? location.categories[selectedCategory] || 0
+          : location.totalCount
+      }</div>`,
       className: '',
       iconSize: [size, size],
     });
@@ -47,7 +52,11 @@ const MapWithPins: React.FC<MapWithPinsProps> = ({
     <MapContainer
       center={[32.4279, 53.688]}
       zoom={6}
-      style={{ height: '100%', width: '100%', borderRadius: '15px' }}
+      style={{
+        height: '100%',
+        width: '100%',
+        borderRadius: '15px',
+      }}
     >
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"
@@ -63,18 +72,28 @@ const MapWithPins: React.FC<MapWithPinsProps> = ({
               click: () => onPinClick?.(location),
             }}
           >
-            <Popup>
+            <Popup maxWidth={300}>
               <div className="p-2 min-w-48">
-                <h3 className="font-bold mb-2">Location Details</h3>
-                <p className="text-sm mb-2">
-                  Coordinates: {location.lat.toFixed(4)},{' '}
-                  {location.lng.toFixed(4)}
+                <p className="text-sm mb-2 text-start font-semibold">
+                  کل پیام ها : {location.totalCount}
                 </p>
-                <p className="text-sm mb-2 font-semibold">
-                  Total Count: {location.totalCount}
-                </p>
+                {location.image && (
+                  <div className="mb-3">
+                    <Image
+                      src={location.image}
+                      alt="SMS Content"
+                      width={200}
+                      height={150}
+                      className="rounded-lg object-cover w-full"
+                      unoptimized
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-1 max-h-32 overflow-y-auto">
-                  <h4 className="text-sm font-semibold">Categories:</h4>
+                  <h4 className="text-sm font-semibold text-start">
+                    دسته بندی:
+                  </h4>
                   {Object.entries(location.categories)
                     .filter(([_, count]) => count > 0)
                     .map(([category, count]) => (
@@ -82,9 +101,7 @@ const MapWithPins: React.FC<MapWithPinsProps> = ({
                         key={category}
                         className="flex justify-between text-xs"
                       >
-                        <span className="flex-1 text-right" dir="rtl">
-                          {category}:
-                        </span>
+                        <span className="flex-1 text-right">{category}:</span>
                         <span className="font-semibold ml-2">{count}</span>
                       </div>
                     ))}

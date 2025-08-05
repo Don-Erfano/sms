@@ -121,9 +121,9 @@ const CategoryChart: React.FC<CategoryChartProps> = ({
         },
         title: {
           text: selectedSubCategory
-            ? `${selectedSubCategory} Distribution`
+            ? `${selectedSubCategory}`
             : selectedMainCategory
-              ? `${selectedMainCategory} Subcategories`
+              ? `${selectedMainCategory}`
               : 'تمام دسته بندی ها',
           align: 'center',
         },

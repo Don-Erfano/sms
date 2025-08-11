@@ -135,6 +135,9 @@ const MapWithPins: React.FC<MapWithPinsProps> = ({
                               className="flex justify-between text-xs"
                             >
                               <span className="flex-1 text-right">{sub}</span>
+                              <span className="font-semibold ml-2">
+                                {location.categories[sub]}
+                              </span>
                             </div>
                           ))}
                       </div>

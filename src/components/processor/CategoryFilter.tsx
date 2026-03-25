@@ -27,9 +27,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     }
   };
 
-  const getTotalCount = () => {
-    return mainCategories.reduce((total, cat) => total + cat.count, 0);
-  };
+  const getTotalCount = () =>
+    mainCategories.reduce((total, cat) => total + cat.count, 0);
 
   return (
     <div className="min-w-[700px] mx-auto bg-white flex p-4 rounded-lg shadow-lg">

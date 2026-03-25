@@ -105,7 +105,10 @@ const CategoryChart: React.FC<CategoryChartProps> = ({
         },
         yaxis: {
           title: {
-            text: 'Count',
+            text: 'تعداد',
+            style: {
+              fontSize: '14px',
+            },
           },
         },
         fill: {
@@ -137,7 +140,7 @@ const CategoryChart: React.FC<CategoryChartProps> = ({
   if (chartData.series[0].data.length === 0) {
     return (
       <div className="flex items-center justify-center h-80 bg-gray-50 rounded-lg">
-        <p className="text-black">No data to display</p>
+        <p className="text-black">داده ای برای نمایش وجود ندارد</p>
       </div>
     );
   }

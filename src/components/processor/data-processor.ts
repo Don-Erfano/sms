@@ -4,9 +4,7 @@ export interface LocationData {
   id: string;
   lat: number;
   lng: number;
-  categories: {
-    [key: string]: number;
-  };
+  categories: { [key: string]: number };
   totalCount: number;
   image: string | undefined;
 }
@@ -37,7 +35,7 @@ export const categoryHierarchy: {
 } = {
   تبلیغاتی: {
     name: 'تبلیغاتی',
-    color: '#45B7D1',
+    color: '#c81050',
     subcategories: [
       'آموزشگاه',
       'املاک',
@@ -67,7 +65,7 @@ export const categoryHierarchy: {
   },
   استخدام: {
     name: 'استخدام',
-    color: '#96CEB4',
+    color: '#7f0bc8',
     subcategories: ['استخدام'],
   },
 };
@@ -102,23 +100,15 @@ export const processLocationData = (): LocationData[] => {
   return csvData
     .map((item: any, index: number) => {
       const locationStr = item.location_;
-
       const coords = locationStr.split(',');
-      if (coords.length !== 2) {
-        console.warn(`invalid coordinate ${index}:`, locationStr);
-        return null;
-      }
+      if (coords.length !== 2) return null;
 
       const lat = parseFloat(coords[0]);
       const lng = parseFloat(coords[1]);
-
-      if (isNaN(lat) || isNaN(lng)) {
-        return null;
-      }
+      if (isNaN(lat) || isNaN(lng)) return null;
 
       const categories: { [key: string]: number } = {};
       let totalCount = 0;
-
       Object.keys(item).forEach((key) => {
         if (
           key !== 'location_' &&
@@ -133,10 +123,7 @@ export const processLocationData = (): LocationData[] => {
         }
       });
 
-      if (totalCount === 0) {
-        return null;
-      }
-
+      if (totalCount === 0) return null;
       const imagePath = item.image ? `/${item.image}` : undefined;
 
       return {

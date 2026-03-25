@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'smsproject.nextaibox.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     unoptimized: true,
   },
